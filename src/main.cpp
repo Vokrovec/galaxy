@@ -22,7 +22,7 @@ float Random(float min, float max)
 
 int main() {
   Renderer rend(400, 800, "Galaxy simulator");
-  for (int i = 0; i < 10000; i++)
+  for (int i = 0; i < 100000; i++)
   {
       stars.push_back({Random(-1.f, 1.f), Random(-1.f, 1.f), Random(-1.f, 1.f)});
   }
