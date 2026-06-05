@@ -1,0 +1,19 @@
+#compilation
+.cache
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+*.cmake
+compile_commands.json
+
+#compiled outputs
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+*.out
