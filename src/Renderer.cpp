@@ -144,8 +144,8 @@ Renderer::Renderer(int width, int height, const std::string & title, Galaxy & ga
       3,
       GL_FLOAT,
       GL_FALSE,
-      sizeof(Star),
-      (void*)offsetof(Star, position)
+      sizeof(StarGPU),
+      (void*)offsetof(StarGPU, position)
   );
   glEnableVertexAttribArray(0);
 
@@ -155,8 +155,8 @@ Renderer::Renderer(int width, int height, const std::string & title, Galaxy & ga
       4,
       GL_FLOAT,
       GL_FALSE,
-      sizeof(Star),
-      (void*)offsetof(Star, color)
+      sizeof(StarGPU),
+      (void*)offsetof(StarGPU, color)
   );
   glEnableVertexAttribArray(1);
 
@@ -239,10 +239,10 @@ void Renderer::addGalaxy(const Galaxy & galaxy) {
 void Renderer::addStars() const {
   glBindVertexArray(m_VAO);
   glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-  const std::vector<Star> & stars = m_galaxy.getStars();
+  const std::vector<StarGPU> & stars = m_galaxy.getStars();
 
   glBufferData(GL_ARRAY_BUFFER,
-    stars.size() * sizeof(Star),
+    stars.size() * sizeof(StarGPU),
     stars.data(),
     GL_STATIC_DRAW);
 }

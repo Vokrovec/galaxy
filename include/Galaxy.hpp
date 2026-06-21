@@ -10,8 +10,9 @@ class Galaxy {
   public:
     Galaxy() = default;
     void generateStars(size_t numberOfStars);
-    [[nodiscard]] const std::vector<Star> & getStars() const;
+    [[nodiscard]] std::vector<StarGPU> getStars() const;
     size_t getStarCount() const;
+    void updateStars(float deltaTime);
   private:
     std::vector<Star> m_stars;
 };

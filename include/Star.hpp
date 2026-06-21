@@ -8,4 +8,10 @@
 struct Star {
     glm::vec3 position;
     glm::vec4 color;
+    glm::vec3 velocity;
+    float mass;
+};
+struct StarGPU {
+    glm::vec3 position;
+    glm::vec4 color;
 };
