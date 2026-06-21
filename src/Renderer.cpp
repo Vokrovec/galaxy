@@ -1,14 +1,19 @@
 //#pragma once
+#include "Galaxy.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Renderer.hpp>
 #include <stdexcept>
 #include <Star.hpp>
+#include <vector>
 
 const char* vertexShaderSrc = R"(
 #version 330 core
 
 layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec4 aColor;
+
+out vec4 vColor;
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -16,6 +21,7 @@ uniform mat4 projection;
 
 void main()
 {
+    vColor = aColor;
     gl_Position = projection * view * vec4(aPos, 1.0);
     gl_PointSize = 5.0;
 }
@@ -24,11 +30,12 @@ void main()
 const char* fragmentShaderSrc = R"(
 #version 330 core
 
+in vec4 vColor;
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(1.0,1.0,1.0,1.0);
+    FragColor = vColor;
 }
 )";
 
@@ -62,8 +69,7 @@ GLuint CompileShader(GLenum type, const char* source) {
 }
 
 
-Renderer::Renderer(int width, int height, const std::string & title){
-
+Renderer::Renderer(int width, int height, const std::string & title, Galaxy & galaxy): m_galaxy(galaxy) {
   // Initialize GLFW
   if (!glfwInit()) {
     glfwTerminate();
@@ -130,10 +136,29 @@ Renderer::Renderer(int width, int height, const std::string & title){
   glGenBuffers(1, &m_VBO);
 
   glBindVertexArray(m_VAO);
-
   glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), nullptr);
+
+  // position
+  glVertexAttribPointer(
+      0,
+      3,
+      GL_FLOAT,
+      GL_FALSE,
+      sizeof(Star),
+      (void*)offsetof(Star, position)
+  );
   glEnableVertexAttribArray(0);
+
+  // color
+  glVertexAttribPointer(
+      1,
+      4,
+      GL_FLOAT,
+      GL_FALSE,
+      sizeof(Star),
+      (void*)offsetof(Star, color)
+  );
+  glEnableVertexAttribArray(1);
 
 
   glBindVertexArray(0);
@@ -174,6 +199,7 @@ void Renderer::setShouldClose(bool val) {
 }
 
 void Renderer::Draw() {
+  addStars();
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -200,20 +226,25 @@ void Renderer::Draw() {
 
 
   glBindVertexArray(m_VAO);
-  glDrawArrays(GL_POINTS, 0, m_StarCount);
+  glDrawArrays(GL_POINTS, 0, m_galaxy.getStarCount());
 
   glfwSwapBuffers(window);
 }
 
-void Renderer::addStars(const std::vector<star> & stars) {
+void Renderer::addGalaxy(const Galaxy & galaxy) {
+  m_galaxy = galaxy;
+  addStars();
+}
+
+void Renderer::addStars() const {
   glBindVertexArray(m_VAO);
   glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  const std::vector<Star> & stars = m_galaxy.getStars();
 
   glBufferData(GL_ARRAY_BUFFER,
-    stars.size() * sizeof(star),
+    stars.size() * sizeof(Star),
     stars.data(),
     GL_STATIC_DRAW);
-  m_StarCount = stars.size();
 }
 
 void Renderer::ProcessMouse(int X, int Y) {

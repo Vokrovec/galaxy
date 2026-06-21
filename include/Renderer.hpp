@@ -1,15 +1,15 @@
 #pragma once
 
 #include <string>
-#include <GLFW/glfw3.h>
-#include <vector>
+#include <Galaxy.hpp>
 #include <Camera.hpp>
 #include <Star.hpp>
+#include <GLFW/glfw3.h>
 
 
 class Renderer {
 public:
-    Renderer(int width, int height, const std::string & title);
+    Renderer(int width, int height, const std::string & title, Galaxy & Galaxy);
     ~Renderer();
     void Draw();
     void HandleInput();
@@ -17,13 +17,15 @@ public:
     void PollEvents();
     bool ShouldClose();
     void setShouldClose(bool);
-    void addStars(const std::vector<star> &);
+    void addGalaxy(const Galaxy &);
+    void addStars() const;
 
 
 private:
     int lastX = 0;
     int lastY = 0;
-    int m_StarCount;
+    //int m_StarCount;
+    Galaxy & m_galaxy;
     GLFWwindow* window;
 
     GLuint m_ShaderProgram;
